@@ -288,6 +288,7 @@ angular.module("ngDraggable", [])
                 var onDragStartCallback = $parse(attrs.ngDragStart);
                 var onDragStopCallback = $parse(attrs.ngDragStop);
                 var onDragMoveCallback = $parse(attrs.ngDragMove);
+                var onDropZoneEnterCallback = $parse(attrs.ngDropZoneEnter);
 
                 var initialize = function () {
                     toggleListeners(true);
@@ -302,6 +303,7 @@ angular.module("ngDraggable", [])
                     scope.$on('$destroy', onDestroy);
                     scope.$on('draggable:start', onDragStart);
                     scope.$on('draggable:move', onDragMove);
+                    scope.$on('draggable:move', onDropZoneEnter);
                     scope.$on('draggable:end', onDragEnd);
                 };
 
@@ -328,6 +330,17 @@ angular.module("ngDraggable", [])
                     if (attrs.ngDragMove) {
                         $timeout(function(){
                             onDragMoveCallback(scope, {$data: obj.data, $event: obj});
+                        });
+                    }
+                };
+
+                var onDropZoneEnter = function(evt, obj) {
+                    if(! _dropEnabled)return;
+
+                    if (attrs.ngDropZoneEnter && isTouching(obj.x,obj.y,obj.element)) {
+                        console.log('test');
+                        $timeout(function(){
+                            onDropZoneEnterCallback(scope, {$data: obj.data, $event: obj});
                         });
                     }
                 };

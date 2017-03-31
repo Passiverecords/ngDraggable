@@ -110,7 +110,7 @@
 
     </div>
 
-    <div ng-drop="true" ng-drop-success="onDropComplete2($data,$event)">
+    <div ng-drop="true" ng-drop-success="onDropComplete2($data,$event)" ng-drop-zone-enter="myalert($data,$event)">
         <span class="title">Drop area #2</span>
 
         <div ng-repeat="obj in droppedObjects2" ng-drag="true" ng-drag-data="obj"
@@ -126,7 +126,7 @@
 </div>
 <footer style="margin-top:2000px;">footer</footer>
 
-<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>
 <script src="ngDraggable.js"></script>
 <script>
     angular.module('ExampleApp', ['ngDraggable']).
@@ -172,6 +172,10 @@
                 }
                 var inArray = function (array, obj) {
                     var index = array.indexOf(obj);
+                }
+                $scope.myalert = function(data, event){
+                    console.log(data);
+                    console.log(event);
                 }
             });
 </script>
