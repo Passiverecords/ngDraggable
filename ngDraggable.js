@@ -338,7 +338,6 @@ angular.module("ngDraggable", [])
                     if(! _dropEnabled)return;
 
                     if (attrs.ngDropZoneEnter && isTouching(obj.x,obj.y,obj.element)) {
-                        console.log('test');
                         $timeout(function(){
                             onDropZoneEnterCallback(scope, {$data: obj.data, $event: obj});
                         });
