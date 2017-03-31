@@ -130,6 +130,7 @@ angular.module("ngDraggable", [])
                         _pressTimer = setTimeout(function(){
                             cancelPress();
                             onlongpress(evt);
+                            onmove(evt);
                         },ngDraggable.touchTimeout);
                         $document.on(_moveEvents, cancelPress);
                         $document.on(_releaseEvents, cancelPress);
@@ -288,6 +289,7 @@ angular.module("ngDraggable", [])
                 var onDragStopCallback = $parse(attrs.ngDragStop);
                 var onDragMoveCallback = $parse(attrs.ngDragMove);
                 var onDropZoneEnterCallback = $parse(attrs.ngDropZoneEnter);
+                var onDropZoneOutCallback = $parse(attrs.ngDropZoneOut);
 
                 var initialize = function () {
                     toggleListeners(true);
@@ -302,7 +304,6 @@ angular.module("ngDraggable", [])
                     scope.$on('$destroy', onDestroy);
                     scope.$on('draggable:start', onDragStart);
                     scope.$on('draggable:move', onDragMove);
-                    scope.$on('draggable:move', onDropZoneEnter);
                     scope.$on('draggable:end', onDragEnd);
                 };
 
@@ -324,22 +325,23 @@ angular.module("ngDraggable", [])
                 };
                 var onDragMove = function(evt, obj) {
                     if(! _dropEnabled)return;
-                    isTouching(obj.x,obj.y,obj.element);
+                    var _oldtouch = scope.isTouching;
+
+                    if(isTouching(obj.x,obj.y,obj.element) && !_oldtouch){
+                        $timeout(function(){
+                            onDropZoneEnterCallback(scope, {$data: obj.data, $event: obj});
+                        });
+                    }
+
+                    if(!isTouching(obj.x,obj.y,obj.element) && _oldtouch){
+                        $timeout(function(){
+                            onDropZoneOutCallback(scope, {$data: obj.data, $event: obj});
+                        });
+                    }
 
                     if (attrs.ngDragMove) {
                         $timeout(function(){
                             onDragMoveCallback(scope, {$data: obj.data, $event: obj});
-                        });
-                    }
-                };
-
-                var onDropZoneEnter = function(evt, obj) {
-                    if(! _dropEnabled)return;
-
-                    if (attrs.ngDropZoneEnter && isTouching(obj.x,obj.y,obj.element)) {
-                        console.log('test');
-                        $timeout(function(){
-                            onDropZoneEnterCallback(scope, {$data: obj.data, $event: obj});
                         });
                     }
                 };
